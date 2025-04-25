@@ -27,15 +27,18 @@ VALUES
 
 select * from customer_sales;
 
-with rankings as (
-select id	
-		, transaction_value
-		, created_at
-		, row_number() over(partition by cast(created_at as date) order by created_at DESC) as rn
-from customer_sales)
-select id
-, transaction_value
-, created_at 
-from rankings
-where rn = 1
-order by created_at
+WITH rankings
+     AS (SELECT id,
+                transaction_value,
+                created_at,
+                Row_number()
+                  OVER(
+                    partition BY Cast(created_at AS DATE)
+                    ORDER BY created_at DESC) AS rn
+         FROM   customer_sales)
+SELECT id,
+       transaction_value,
+       created_at
+FROM   rankings
+WHERE  rn = 1
+ORDER  BY created_at;
